@@ -1,0 +1,52 @@
+title: dirtboll-nim
+name: dirtboll-nim
+contact: 61202885+dirtboll@users.noreply.github.com
+license: MIT
+base: core26
+version: '2.4'
+summary: Unofficial Snap for Nim programming language
+description: |
+  Unofficial Snap for Nim programming language
+
+grade: stable
+confinement: classic
+
+parts:
+  nim:
+    plugin: nil
+    build-packages:
+    - build-essential
+    - wget
+    override-pull: |
+      VERSION=${SNAPCRAFT_PROJECT_VERSION//./-}
+      wget https://github.com/nim-lang/nightlies/releases/download/latest-version-${VERSION}/source.tar.xz
+      tar -xf source.tar.xz --strip-components=1
+      rm source.tar.xz
+    override-build: |
+      cd $CRAFT_PART_SRC
+      sh build.sh
+      bin/nim c -d:release koch
+      ./koch boot -d:release
+      ./koch tools
+      cp -ra . $CRAFT_PART_INSTALL/
+
+  bootstrap:
+    plugin: dump
+    source: .
+    stage:
+      - nim.cfg
+      - run.sh
+
+apps:
+  dirtboll-nim:
+    command: run.sh nim
+
+  nimble:
+    command: run.sh nimble
+  
+  nimsuggest:
+    command: run.sh nimsuggest
+
+layout:
+  /etc/nim/nim.cfg:
+    bind-file: $SNAP_DATA/nim.cfg
