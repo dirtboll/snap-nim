@@ -4,12 +4,12 @@ contact: 61202885+dirtboll@users.noreply.github.com
 license: MIT
 base: core26
 version: '2.4'
-summary: Unofficial Snap for Nim programming language
+summary: Nim programming language
 description: |
-  Unofficial Snap for Nim programming language
+  Unofficial Snap for Nim compiler
 
 grade: stable
-confinement: classic
+confinement: strict
 
 parts:
   nim:
@@ -29,6 +29,14 @@ parts:
       ./koch boot -d:release
       ./koch tools
       cp -ra . $CRAFT_PART_INSTALL/
+    stage-packages:
+    - git
+    - libssl-dev
+    - build-essential
+    - gcc
+    - g++
+    - libc6-dev
+    - binutils
 
   bootstrap:
     plugin: dump
@@ -40,12 +48,15 @@ parts:
 apps:
   dirtboll-nim:
     command: run.sh nim
+    plugs: [home, network]
 
   nimble:
     command: run.sh nimble
+    plugs: [home, network]
   
   nimsuggest:
     command: run.sh nimsuggest
+    plugs: [home, network]
 
 layout:
   /etc/nim/nim.cfg:
